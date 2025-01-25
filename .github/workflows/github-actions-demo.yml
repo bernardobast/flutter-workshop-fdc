@@ -43,39 +43,38 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
-      
             
       # Installs flutter and related dependency on this machine
-      - name: Setup Flutters
+      - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-           # flutter-version: '3.16.8'
-           # ^ If you want to use a specific version of flutter
+
       # Fetches proj dependencies from pub
       - name: Install dependencies
         run: flutter pub get
-          # ^ If you want to use a specific version of flutter
           
-          # Verifies if the dart code is formatted well
+      # Verifies if the dart code is formatted well
       - name: Verify formatting
         run: dart format --output=none --set-exit-if-changed .
-            # --set-exit-if-changed stops execution if the any code is not well formatted
-            # --output=none prints files which needs to be formatted
           
       # Checks for Symantic errors. Can be configured using analysis_options.yaml
       - name: Analyze project source
         run: flutter analyze
-        # optionally use --fatal-warnings to stop execution if any warnings are found
     
       # Runs unit test
       - name: Run tests
         run: flutter test
 
+      # Runs unit test
+      - name: Build flutter app for web
+        run: flutter build web
+
       - name: Authenticate with GCP
         uses: google-github-actions/auth@v1
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
+
       - name: Configure GCP Project
         run: gcloud config set project ${{ secrets.GCP_PROJECT_ID }} 
 
