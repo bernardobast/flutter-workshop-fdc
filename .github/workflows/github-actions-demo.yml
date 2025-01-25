@@ -80,6 +80,8 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
+          gcloud auth configure-docker --quiet
+          gcloud auth configure-docker europe-west3-docker.pkg.dev --quiet
           IMAGE=europe-west3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_ARTIFACT_REGISTRY }}/flutter-app-runner:v1.0.5
           docker build -t $IMAGE .
           docker push $IMAGE
