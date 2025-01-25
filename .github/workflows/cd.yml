@@ -9,6 +9,9 @@ jobs:
   Build-Test-Deploy-Cloud-Run:
     runs-on: ubuntu-latest
     steps:
+      - name: Check out repository code 
+        uses: actions/checkout@v4
+
       - name: Build lint and Test Flutter App 🧪
         uses: ./.github/workflows/build-lint-test.yml
         with: 
