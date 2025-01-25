@@ -1,4 +1,4 @@
-name: GitHub Actions Demo
+name: CI
 run-name: ${{ github.actor }} is running the CI 🚀
 on:
     # Runs this when a PR against master is created
