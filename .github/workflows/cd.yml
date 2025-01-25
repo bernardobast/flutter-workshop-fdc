@@ -1,22 +1,19 @@
 name: CD
 run-name: ${{ github.actor }} is running the CD ⚙️
 on:
-  push:
-    branches:
-      - main
+  # Runs this when a PR against master is created
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
-  Build-Test-Deploy-Cloud-Run:
+  build-lint-test:
+    uses: ./.github/workflows/build-lint-test.yml
+    with: 
+      flutter-version: 'stable'
+  deploy-cloud-run:
     runs-on: ubuntu-latest
+    needs: build-lint-test
     steps:
-      - name: Check out repository code 
-        uses: actions/checkout@v4
-
-      - name: Build lint and Test Flutter App 🧪
-        uses: ./.github/workflows/build-lint-test.yml
-        with: 
-          flutter-version: 'stable'
-  
       # Build app for web
       - name: Build flutter app for web 🛜
         run: flutter build web
