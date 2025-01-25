@@ -1,0 +1,11 @@
+name: CI
+run-name: ${{ github.actor }} is running the CI 🚀
+on:
+    # Runs this when a PR against master is created
+    pull_request:
+      branches: [ "main" ]
+jobs:
+  build-lint-test:
+    uses: ./.github/workflows/build-lint-test.yml
+    with: 
+      flutter-version: 'stable'
