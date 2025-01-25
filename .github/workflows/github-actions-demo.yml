@@ -12,7 +12,7 @@ jobs:
         uses: actions/checkout@v4
 
       # Installs flutter and related dependency on this machine
-      - name: Setup Flutter
+      - name: Setup Flutters
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
@@ -41,6 +41,9 @@ jobs:
   Explore-Cloud-Run:
     runs-on: ubuntu-latest
     steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
       - name: Authenticate with GCP
         uses: google-github-actions/auth@v1
         with:
@@ -54,11 +57,11 @@ jobs:
           docker build -t $IMAGE .
           docker push $IMAGE
   
-      - name: Deploy to Cloud Run
-        run: |
-          gcloud run deploy team${{ secrets.TEAM_NUMBER }}-app \
-            --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/team${{ secrets.TEAM_NUMBER }}-app \
-            --platform managed \
-            --region us-central1 \
-            --allow-unauthenticated \
-            --domain team${{ secrets.TEAM_NUMBER }}.myworkshop.co
+      # - name: Deploy to Cloud Run
+      #   run: |
+      #     gcloud run deploy team${{ secrets.TEAM_NUMBER }}-app \
+      #       --image europe-west3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_ARTIFACT_REGISTRY }}/flutter-app-runner:v1.0.5 \
+      #       --platform managed \
+      #       --region us-central1 \
+      #       --allow-unauthenticated \
+      #       --domain team${{ secrets.TEAM_NUMBER }}.myworkshop.co
