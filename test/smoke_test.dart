@@ -2,6 +2,8 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'dart:ui';
+
 import 'package:card/main.dart';
 import 'package:card/play_session/playing_card_widget.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -9,6 +11,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   testWidgets('smoke test', (tester) async {
     // Build our game and trigger a frame.
+    tester.view.physicalSize = Size(3600, 3600);
     await tester.pumpWidget(MyApp());
 
     // Verify that the 'Play' button is shown.
