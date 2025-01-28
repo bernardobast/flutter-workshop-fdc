@@ -51,6 +51,7 @@ jobs:
       # Deploy new vestion
       - name: Deploy to Cloud Run ☁️
         run: |
+          export VERSION=$(cat app-version)
           gcloud run deploy flutter-workshop \
             --image europe-west3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_ARTIFACT_REGISTRY }}/flutter-app-runner:v$VERSION \
             --region us-central1
