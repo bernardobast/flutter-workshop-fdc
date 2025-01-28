@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:card/game_internals/card_suit.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -12,8 +13,9 @@ import 'playing_card_widget.dart';
 
 class PlayingAreaWidget extends StatefulWidget {
   final PlayingArea area;
+  final String symbol;
 
-  const PlayingAreaWidget(this.area, {super.key});
+  const PlayingAreaWidget(this.area, this.symbol, {super.key});
 
   @override
   State<PlayingAreaWidget> createState() => _PlayingAreaWidgetState();
@@ -26,31 +28,46 @@ class _PlayingAreaWidgetState extends State<PlayingAreaWidget> {
   Widget build(BuildContext context) {
     final palette = context.watch<Palette>();
 
-    return LimitedBox(
-      maxHeight: 200,
-      child: AspectRatio(
-        aspectRatio: 1 / 1,
-        child: DragTarget<PlayingCardDragData>(
-          builder: (context, candidateData, rejectedData) => Material(
-            color: isHighlighted ? palette.accept : palette.trueWhite,
-            shape: const CircleBorder(),
-            clipBehavior: Clip.hardEdge,
-            child: InkWell(
-              splashColor: palette.redPen,
-              onTap: _onAreaTap,
-              child: StreamBuilder(
-                // Rebuild the card stack whenever the area changes
-                // (either by a player action, or remotely).
-                stream: widget.area.allChanges,
-                builder: (context, child) => _CardStack(widget.area.cards),
-              ),
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            widget.symbol,
+            style: TextStyle(
+              fontFamily: 'Permanent Marker',
+              fontSize: 30,
+              color: _getCardColor(widget.symbol)
             ),
           ),
-          onWillAcceptWithDetails: _onDragWillAccept,
-          onLeave: _onDragLeave,
-          onAcceptWithDetails: _onDragAccept,
         ),
-      ),
+        LimitedBox(
+          maxHeight: 200,
+          child: AspectRatio(
+            aspectRatio: 1 / 1,
+            child: DragTarget<PlayingCardDragData>(
+              builder: (context, candidateData, rejectedData) => Material(
+                color: isHighlighted ? palette.accept : palette.trueWhite,
+                shape: const CircleBorder(),
+                clipBehavior: Clip.hardEdge,
+                child: InkWell(
+                  splashColor: palette.redPen,
+                  onTap: _onAreaTap,
+                  child: StreamBuilder(
+                    // Rebuild the card stack whenever the area changes
+                    // (either by a player action, or remotely).
+                    stream: widget.area.allChanges,
+                    builder: (context, child) => _CardStack(widget.area.cards),
+                  ),
+                ),
+              ),
+              onWillAcceptWithDetails: _onDragWillAccept,
+              onLeave: _onDragLeave,
+              onAcceptWithDetails: _onDragAccept,
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -72,8 +89,24 @@ class _PlayingAreaWidgetState extends State<PlayingAreaWidget> {
   }
 
   bool _onDragWillAccept(DragTargetDetails<PlayingCardDragData> details) {
-    setState(() => isHighlighted = true);
-    return true;
+    if(details.data.card.suit.asCharacter == widget.symbol) {
+      setState(() => isHighlighted = true);
+      return true;
+    }
+    return false;
+  }
+
+  // Returns symbol color
+  Color _getCardColor(String symbol ) {
+    switch(symbol){
+      case "♥":
+      case "♦":
+        return Color.fromRGBO(255, 0, 0, 1);
+      case "♠":
+      case "♣":
+        return Color.fromRGBO(0, 0, 0, 1);
+    }
+    return Color.fromRGBO(255, 0, 0, 1);
   }
 }
 

@@ -14,6 +14,10 @@ class BoardState {
 
   final PlayingArea areaTwo = PlayingArea();
 
+  final PlayingArea areaThree = PlayingArea();
+
+  final PlayingArea areaFour = PlayingArea();
+
   final Player player = Player();
 
   BoardState({required this.onWin}) {
