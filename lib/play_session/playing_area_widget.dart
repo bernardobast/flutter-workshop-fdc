@@ -34,10 +34,9 @@ class _PlayingAreaWidgetState extends State<PlayingAreaWidget> {
           child: Text(
             widget.symbol,
             style: TextStyle(
-              fontFamily: 'Permanent Marker',
-              fontSize: 30,
-              color: _getCardColor(widget.symbol)
-            ),
+                fontFamily: 'Permanent Marker',
+                fontSize: 30,
+                color: _getCardColor(widget.symbol)),
           ),
         ),
         LimitedBox(
@@ -88,7 +87,7 @@ class _PlayingAreaWidgetState extends State<PlayingAreaWidget> {
   }
 
   bool _onDragWillAccept(DragTargetDetails<PlayingCardDragData> details) {
-    if(details.data.card.suit.asCharacter == widget.symbol) {
+    if (details.data.card.suit.asCharacter == widget.symbol) {
       setState(() => isHighlighted = true);
       return true;
     }
@@ -96,8 +95,8 @@ class _PlayingAreaWidgetState extends State<PlayingAreaWidget> {
   }
 
   // Returns symbol color
-  Color _getCardColor(String symbol ) {
-    switch(symbol){
+  Color _getCardColor(String symbol) {
+    switch (symbol) {
       case "♥":
       case "♦":
         return Color.fromRGBO(255, 0, 0, 1);
