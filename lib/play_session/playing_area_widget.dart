@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:card/game_internals/card_suit.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
