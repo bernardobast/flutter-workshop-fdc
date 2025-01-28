@@ -1,9 +1,10 @@
 name: CD
 run-name: ${{ github.actor }} is running the CD ⚙️
 on:
-  # Runs this when a PR against master is created
-  pull_request:
-    branches: [ "main" ]
+  # Runs this everytime a PR is merged against main
+  push:
+    branches:
+      - main
 
 jobs:
   build-lint-test:
