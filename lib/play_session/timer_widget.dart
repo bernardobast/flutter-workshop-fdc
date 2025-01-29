@@ -35,9 +35,12 @@ class _TimerCountUpWidgetState extends State<TimerCountUpWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return  Text(
-          "Drag the cards FAST!!! $_elapsedSeconds",
-          style: TextStyle(fontSize: 24, fontFamily: 'Permanent Marker',),
-        );
+    return Text(
+      "Drag the cards FAST!!! $_elapsedSeconds",
+      style: TextStyle(
+        fontSize: 24,
+        fontFamily: 'Permanent Marker',
+      ),
+    );
   }
 }
