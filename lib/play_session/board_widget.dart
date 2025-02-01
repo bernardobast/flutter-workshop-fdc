@@ -28,7 +28,7 @@ class _BoardWidgetState extends State<BoardWidget> {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Center(child: Container(height: 30, child: TimerCountUpWidget())),
+        Center(child: SizedBox(height: 30, child: TimerCountUpWidget())),
         Padding(
           padding: const EdgeInsets.all(10),
           child: Row(

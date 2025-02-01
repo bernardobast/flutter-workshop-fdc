@@ -6,10 +6,10 @@ class TimerCountUpWidget extends StatefulWidget {
   const TimerCountUpWidget({super.key});
 
   @override
-  _TimerCountUpWidgetState createState() => _TimerCountUpWidgetState();
+  TimerCountUpWidgetState createState() => TimerCountUpWidgetState();
 }
 
-class _TimerCountUpWidgetState extends State<TimerCountUpWidget> {
+class TimerCountUpWidgetState extends State<TimerCountUpWidget> {
   late Timer _timer;
   int _elapsedSeconds = 0;
 
