@@ -2,6 +2,7 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'package:card/play_session/timer_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -27,6 +28,7 @@ class _BoardWidgetState extends State<BoardWidget> {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        Center(child: SizedBox(height: 30, child: TimerCountUpWidget())),
         Padding(
           padding: const EdgeInsets.all(10),
           child: Row(
