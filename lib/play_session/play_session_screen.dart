@@ -80,7 +80,7 @@ class _PlaySessionScreenState extends State<PlaySessionScreen> {
                   const Spacer(),
                   // The actual UI of the game.
                   const BoardWidget(),
-                  const Text('Drag cards to the two areas above.'),
+                  const Text('Drag cards to the correct symbol!'),
                   const Spacer(),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
