@@ -12,30 +12,31 @@ jobs:
     build-lint-test:
         runs-on: ubuntu-latest
         steps:
+          # Fetches the GitHub repository files
           - name: Check out repository code 
             uses: actions/checkout@v4
-    
-          # Installs flutter and related dependency on this machine
+          
+          # Popular community-maintained action used to set up Flutter in GitHub workflows. 
+          # Installs Flutter and allows you to run commands like flutter build, flutter test, and flutter analyze within your CI/CD pipeline.
           - name: Setup Flutter 
             uses: subosito/flutter-action@v2
             with:
-                channel: ${{ inputs.flutter-version }}
+              channel: 'stable' 
           
-          # Fetches proj dependencies from pub
+          # Fetch and install the dependencies listed in the project's pubspec.yaml file.
           - name: Install dependencies
             run: flutter pub get
-            # ^ If you want to use a specific version of flutter
           
-          # Verifies if the dart code is formatted well
+          # Detect unformatted files and fail the pipeline if formatting issues exist.
+          # --set-exit-if-changed stops execution if the any code is not well formatted
+          # --output=none prints files which needs to be formatted
           - name: Verify formatting
             run: dart format --output=none --set-exit-if-changed .
-            # --set-exit-if-changed stops execution if the any code is not well formatted
-            # --output=none prints files which needs to be formatted
           
-          # Checks for Symantic errors. Can be configured using analysis_options.yaml
+          # Checks your project for code issues, potential errors, and enforces best practices.
           - name: Analyze project source
             run: flutter analyze
     
-          # Runs unit test
+          # Runs unit test.
           - name: Run tests
             run: flutter test
