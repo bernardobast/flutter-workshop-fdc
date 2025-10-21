@@ -55,24 +55,25 @@ jobs:
       # - Reads version number from app-version file for image tagging
       # - Builds containerized app using Dockerfile (nginx serving Flutter web build)
       # - Pushes the versioned image to Artifact Registry for deployment
+      # - Image name includes group number for unique identification
       - name: Build and Push Docker Image 🐳
         run: |
           gcloud auth configure-docker --quiet
           gcloud auth configure-docker europe-west3-docker.pkg.dev --quiet
           export VERSION=$(cat app-version)
-          IMAGE=europe-west3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_ARTIFACT_REGISTRY }}/flutter-app-runner:v$VERSION
+          IMAGE=europe-west3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_ARTIFACT_REGISTRY }}/flutter-app-runner-group-${{ vars.GROUP_NUMBER }}:v$VERSION
           docker build -t $IMAGE .
           docker push $IMAGE
       
       # Step 7: Deploy the containerized app to Google Cloud Run
       # - Pulls the versioned image from Artifact Registry
-      # - Deploys to us-central1 region
+      # - Deploys to us-central1 region with unique service name per group
       # - Allows unauthenticated access for public web application
       # - Cloud Run automatically handles scaling, HTTPS, and load balancing
       - name: Deploy to Cloud Run ☁️
         run: |
           export VERSION=$(cat app-version)
-          gcloud run deploy flutter-workshop \
-            --image europe-west3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_ARTIFACT_REGISTRY }}/flutter-app-runner:v$VERSION \
+          gcloud run deploy flutter-workshop-group-${{ vars.GROUP_NUMBER }} \
+            --image europe-west3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_ARTIFACT_REGISTRY }}/flutter-app-runner-group-${{ vars.GROUP_NUMBER }}:v$VERSION \
             --region us-central1 \
             --allow-unauthenticated 
