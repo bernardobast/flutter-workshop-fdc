@@ -1,6 +1,9 @@
 name: Build Lint Test
 run-name: ${{ github.actor }} is running build, lint and testing the flutter app 🧪
 
+# This is a reusable workflow that can be called from other workflows (CI and CD)
+# It centralizes the build, lint, and test logic to follow DRY (Don't Repeat Yourself) principles
+# This ensures consistent validation across all pipelines
 on:
     workflow_call:
         inputs:
@@ -9,34 +12,43 @@ on:
                 type: string
 
 jobs:
+    # Job: Validate Flutter code quality through building, linting, and testing
+    # This serves as a quality gate to ensure code meets standards before merge or deployment
     build-lint-test:
         runs-on: ubuntu-latest
         steps:
-          # Fetches the GitHub repository files
+          # Step 1: Check out the repository code to the runner
           - name: Check out repository code 
             uses: actions/checkout@v4
           
-          # Popular community-maintained action used to set up Flutter in GitHub workflows. 
-          # Installs Flutter and allows you to run commands like flutter build, flutter test, and flutter analyze within your CI/CD pipeline.
+          # Step 2: Install Flutter SDK using the specified version/channel
+          # Uses a community-maintained action that simplifies Flutter setup in CI/CD
+          # The channel (stable, beta, dev) is passed as an input parameter for flexibility
           - name: Setup Flutter 
             uses: subosito/flutter-action@v2
             with:
-              channel: 'stable' 
+              channel: ${{ inputs.flutter-version }}
           
-          # Fetch and install the dependencies listed in the project's pubspec.yaml file.
+          # Step 3: Fetch and install all project dependencies
+          # Downloads packages defined in pubspec.yaml and prepares the project for building
           - name: Install dependencies
             run: flutter pub get
           
-          # Detect unformatted files and fail the pipeline if formatting issues exist.
-          # --set-exit-if-changed stops execution if the any code is not well formatted
-          # --output=none prints files which needs to be formatted
+          # Step 4: Verify code formatting according to Dart style guidelines
+          # --output=none: Suppresses list of files that need formatting
+          # --set-exit-if-changed: Fails the pipeline if any files are not properly formatted
+          # This enforces consistent code style across the team
           - name: Verify formatting
             run: dart format --output=none --set-exit-if-changed .
           
-          # Checks your project for code issues, potential errors, and enforces best practices.
+          # Step 5: Perform static code analysis
+          # Checks for potential errors, code smells, and violations of best practices
+          # Uses rules defined in analysis_options.yaml
           - name: Analyze project source
             run: flutter analyze
     
-          # Runs unit test.
+          # Step 6: Execute all unit and widget tests
+          # Validates that the application logic works as expected
+          # Fails the pipeline if any test fails
           - name: Run tests
             run: flutter test
