@@ -1,11 +1,16 @@
 name: CI
 run-name: ${{ github.actor }} is running the CI 🚀
 on:
-    # Runs this when a PR against main is created
+    # Triggers the CI pipeline when a pull request is opened, updated, or reopened
+    # targeting the main branch. This validates code changes before they are merged.
     pull_request:
       branches: [ "main" ]
+
 jobs:
+  # Job: Run build, lint, and test validation on the PR
+  # Reuses a shared workflow to ensure consistency between CI and CD pipelines
+  # This prevents broken code from being merged into main
   build-lint-test:
     uses: ./.github/workflows/build-lint-test.yml
     with: 
-      flutter-version: 'stable'
+      flutter-version: 'stable'  # Use stable Flutter channel for reliability

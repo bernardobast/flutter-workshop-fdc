@@ -1,68 +1,199 @@
-# CICD Workshop fdc
+# 🚀 CI/CD Workshop - Flutter to Google Cloud Run
 
-Welcome to the CICD Workshop here you will build your own CICD to deploy a Flutter App. The initial template for the flutter App was inspired from the following repo: https://github.com/flutter/games/tree/main/templates/card
+Welcome to the CI/CD Workshop! In this hands-on workshop, you'll build a complete CI/CD pipeline to deploy a Flutter web application to Google Cloud Run. Learn industry best practices for automating your software delivery process.
 
-# Let's buid a Continuous Integration (CI):
+> **Template Credits:** The initial Flutter app template is inspired by the [Flutter Games repository](https://github.com/flutter/games/tree/main/templates/card).
 
-In this part of the workshop, we will be building a Continuous Integration (CI) system. The CI plays a crucial role in code development as it acts as the first line of defense in the pipeline. Here, we will build, lint, and test our code to ensure that our changes can be safely merged into the main branch.
+## 📋 Table of Contents
 
-We will run the following commands in our CI pipeline:
+- [Overview](#overview)
+- [Prerequisites](#prerequisites)
+- [Part 1: Building Continuous Integration (CI)](#part-1-building-continuous-integration-ci)
+- [Part 2: Building Continuous Deployment (CD)](#part-2-building-continuous-deployment-cd)
+- [Architecture](#architecture)
 
-1. The `flutter pub get` command fetches and installs the dependencies listed in your Flutter project's `pubspec.yaml` file.
-2. The `flutter build web` command compiles your Flutter project into a web application by generating static files that can be hosted on a web server.
-3. The `dart format --output=none --set-exit-if-changed .` command formats Dart code files according to the official Dart style guide.
-4. The `flutter analyze` command analyzes the code for potential issues and enforces Dart best practices and coding standards.
-5. The `flutter test` command runs unit and widget tests in a Flutter project.
+## 🎯 Overview
 
-Follow the existing steps carefully, commit your changes, and watch the CI work!
+This workshop guides you through creating a production-ready CI/CD pipeline that:
+- ✅ Automatically validates code quality on pull requests
+- ✅ Runs automated tests to catch bugs early
+- ✅ Builds and containerizes your Flutter web app
+- ✅ Deploys to Google Cloud Run with zero downtime
+- ✅ Uses reusable workflows to follow DRY principles
+- ✅ Uses reusable workflows to follow DRY principles
 
-# Let's build a Continuous Deployment (CD)
+## 📦 Prerequisites
 
-Congratulations! You have successfully merged your first pull request (PR). Now, let's deploy it to Google Cloud Run. For simplicity, some steps involved in setting up the Google Cloud Project have already been completed. If you would like to set up a project for yourself, please refer to the "Setting up GCP Project" section.
+Before starting, ensure you have:
+- A GitHub account with access to this repository
+- Basic understanding of Git and GitHub workflows
+- Familiarity with Flutter/Dart (helpful but not required)
+- Access to the provided Google Cloud Project credentials
 
-The first step in the Continuous Deployment (CD) process is authentication. You need to provide GitHub with credentials that will allow you to access your GCP project. Follow these steps:
+## 🔧 Part 1: Building Continuous Integration (CI)
 
-1. Go to Settings > Secrets and Variables > Actions > Repository Secrets and add a secret named `GCP_SA_KEY` with the provided credentials.
-2. Add a variable for `GCP_PROJECT_ID` using the provided GCP project ID.
-3. Add a variable for `GCP_ARTIFACT_REGISTRY` using the provided artifact registry.
+Continuous Integration (CI) is your first line of defense against bugs and code quality issues. The CI pipeline automatically validates every pull request before code reaches the main branch.
 
-Now that all the necessary information is correctly added to the secret environment variables, you can start implementing your CD pipeline. Follow these steps:
+### What the CI Pipeline Does
 
-1. Uncomment the steps to authenticate to GCP and Docker registries.
-2. Repeat the same steps as in the Continuous Integration (CI) process: build, lint, and test your Flutter app before starting the deployment phase.
-3. Create a step to build and push the Docker image. The Dockerfile is already provided in the root folder of the project—please read it carefully and ask any questions you may have. The tag to be used is provided below.
-4. Create a step to deploy to Google Cloud Run, as outlined below.
+The CI pipeline runs five essential checks on every pull request:
 
-For step 3 here is the docker tag you should use:
+1. **`flutter pub get`** - Fetches and installs all dependencies from `pubspec.yaml`
+2. **`flutter build web`** - Compiles the Flutter app to web (validates that the build succeeds)
+3. **`dart format --output=none --set-exit-if-changed .`** - Enforces consistent code formatting
+4. **`flutter analyze`** - Performs static code analysis to catch potential issues
+5. **`flutter test`** - Runs all unit and widget tests
+
+### 🎯 Your Task
+
+1. Navigate to `.github/workflows/ci.yml`
+2. Implement the CI pipeline following the comments and instructions
+3. Create a pull request with your changes
+4. Watch the CI pipeline run automatically!
+5. Fix any issues that arise and push updates
+6. Once all checks pass, merge your PR
+
+**Success Criteria:** All CI checks should pass with green checkmarks ✅
+
+---
+
+## 🚀 Part 2: Building Continuous Deployment (CD)
+
+Congratulations on merging your first PR! Now let's automate the deployment process. The CD pipeline triggers automatically when code is merged to the main branch.
+
+### Step 1: Configure GitHub Secrets
+
+GitHub Secrets securely store sensitive information like API keys and credentials.
+
+1. Go to **Settings → Secrets and variables → Actions → Repository secrets**
+2. Add the following secrets:
+   - `GCP_SA_KEY`: Service account key for Google Cloud authentication
+   - `GCP_PROJECT_ID`: Your Google Cloud project ID 
+   - `GCP_ARTIFACT_REGISTRY`: Name of the Artifact Registry
+
+### Step 2: Implement the CD Pipeline
+
+Navigate to `.github/workflows/cd.yml` and implement the following steps:
+
+#### 🔐 Step 1: Authentication
+Authenticate with Google Cloud Platform using the service account credentials:
+```yaml
+- name: Authenticate with GCP
+  uses: google-github-actions/auth@v1
+  with:
+    credentials_json: ${{ secrets.GCP_SA_KEY }}
 ```
-europe-west3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_ARTIFACT_REGISTRY }}/{FLUTTER_APP_NAME}:v$VERSION
+
+#### 🏗️ Step 2: Build & Validate
+Reuse the same build, lint, and test steps from your CI pipeline to ensure code quality.
+
+#### 🐳 Step 3: Build & Push Docker Image
+Build a Docker container with your Flutter web app and push it to Google Artifact Registry:
+
+**Docker Image Tag Format:**
 ```
-For step 4 this is how you should deploy your app to cloud run:
-```
-gcloud run deploy {GOOGLE_CLOUD_RUN_SERVICE} \
- --image {IMAGE_TAG} \
- --region us-central
+europe-west3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_ARTIFACT_REGISTRY }}/flutter-app-runner:v$VERSION
 ```
 
-## Do you have extra time? 🤔
+**Key Commands:**
+```bash
+# Authenticate Docker with GCP
+gcloud auth configure-docker europe-west3-docker.pkg.dev --quiet
 
-Now that you have both CI and CD running didnt you notice that you have repeated code to build, lint and test the Flutter app? Let's change that! Create your own `build-lint-test.yml` GitHub workflow and call it from the `ci.yml` pipeline. Here is an example:
+# Build and tag the image
+docker build -t $IMAGE .
+
+# Push to Artifact Registry
+docker push $IMAGE
+```
+
+**Understanding the Dockerfile:**
+- Based on `nginx:alpine` for lightweight serving
+- Copies Flutter web build output to nginx html directory
+- Configured to serve on port 8080 (Cloud Run requirement)
+- Custom nginx config for Flutter routing
+
+#### ☁️ Step 4: Deploy to Cloud Run
+Deploy your containerized app to Google Cloud Run:
+
+```bash
+gcloud run deploy flutter-workshop \
+  --image europe-west3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_ARTIFACT_REGISTRY }}/flutter-app-runner:v$VERSION \
+  --region us-central1 \
+  --allow-unauthenticated
+```
+
+**Cloud Run Benefits:**
+- Auto-scaling (scales to zero when not in use)
+- Automatic HTTPS
+- Pay-per-use pricing
+- Global load balancing
+
+### 🎯 Your Task
+
+1. Add the required secrets and variables to your GitHub repository
+2. Implement the CD pipeline in `.github/workflows/cd.yml`
+3. Commit and push your changes to trigger the CD workflow
+4. Monitor the workflow execution in the Actions tab
+5. Access your deployed app via the Cloud Run URL!
+
+**Success Criteria:** App successfully deploys and is accessible via the Cloud Run URL 🎉
+
+---
+
+## ️ Architecture
 
 ```
-name: Dummy Reusable Workflow
-
-on:
-  workflow_call:
-    inputs:
-      message:
-        description: "A message to display"
-        required: true
-        type: string
-
-jobs:
-  echo-message:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Display the message
-        run: echo "Message from caller: ${{ inputs.message }}"
+┌─────────────────────────────────────────────────────────────┐
+│                     Developer Workflow                       │
+├─────────────────────────────────────────────────────────────┤
+│  Create PR ──→ CI Pipeline ──→ Code Review ──→ Merge to Main│
+└─────────────────────┬───────────────────────────────────────┘
+                      │
+                      ↓
+┌─────────────────────────────────────────────────────────────┐
+│                    CD Pipeline (Automated)                   │
+├─────────────────────────────────────────────────────────────┤
+│  1. Build & Test                                            │
+│  2. Build Docker Image                                      │
+│  3. Push to Artifact Registry                               │
+│  4. Deploy to Cloud Run                                     │
+└─────────────────────┬───────────────────────────────────────┘
+                      │
+                      ↓
+┌─────────────────────────────────────────────────────────────┐
+│              🌐 Production (Google Cloud Run)               │
+│                  Your Live Flutter App!                     │
+└─────────────────────────────────────────────────────────────┘
 ```
+
+---
+
+## 🎉 Congratulations!
+
+You've successfully built a complete CI/CD pipeline! You now understand:
+- ✅ How CI validates code quality automatically
+- ✅ How CD deploys applications to production
+- ✅ How to use GitHub Actions and Google Cloud Platform
+- ✅ How to containerize and deploy Flutter web apps
+
+### Next Steps
+
+- Explore advanced GitHub Actions features (matrix builds, caching)
+- Add end-to-end testing to your pipeline
+- Implement blue-green deployments
+- Add monitoring and alerting
+- Set up staging environments
+
+---
+
+## 📚 Additional Resources
+
+- [GitHub Actions Documentation](https://docs.github.com/en/actions)
+- [Flutter Web Deployment](https://docs.flutter.dev/deployment/web)
+- [Google Cloud Run Documentation](https://cloud.google.com/run/docs)
+- [Docker Best Practices](https://docs.docker.com/develop/dev-best-practices/)
+
+---
+
+**Happy Coding! 🚀**
