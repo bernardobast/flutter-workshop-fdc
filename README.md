@@ -50,8 +50,7 @@ The CI pipeline runs five essential checks on every pull request:
 2. Implement the CI pipeline following the comments and instructions
 3. Create a pull request with your changes
 4. Watch the CI pipeline run automatically!
-5. Fix any issues that arise and push updates
-6. Once all checks pass, merge your PR
+5. Once all checks pass, merge your PR
 
 **Success Criteria:** All CI checks should pass with green checkmarks ✅
 
@@ -87,7 +86,7 @@ GitHub Secrets and Variables securely store sensitive information and configurat
 
 Navigate to `.github/workflows/cd.yml` and implement the following steps:
 
-#### 🔐 Step 1: Authentication
+#### 🔐 Step 1: Authentication (DONE ✅)
 Authenticate with Google Cloud Platform using the service account credentials:
 ```yaml
 - name: Authenticate with GCP
@@ -96,7 +95,7 @@ Authenticate with Google Cloud Platform using the service account credentials:
     credentials_json: ${{ secrets.GCP_SA_KEY }}
 ```
 
-#### 🏗️ Step 2: Build & Validate
+#### 🏗️ Step 2: Build & Validate (DONE ✅)
 Reuse the same build, lint, and test steps from your CI pipeline to ensure code quality.
 
 #### 🐳 Step 3: Build & Push Docker Image
@@ -119,12 +118,6 @@ docker build -t $IMAGE .
 docker push $IMAGE
 ```
 
-**Understanding the Dockerfile:**
-- Based on `nginx:alpine` for lightweight serving
-- Copies Flutter web build output to nginx html directory
-- Configured to serve on port 8080 (Cloud Run requirement)
-- Custom nginx config for Flutter routing
-
 #### ☁️ Step 4: Deploy to Cloud Run
 Deploy your containerized app to Google Cloud Run:
 
@@ -134,12 +127,6 @@ gcloud run deploy flutter-workshop-group-${{ vars.GROUP_NUMBER }} \
   --region us-central1 \
   --allow-unauthenticated
 ```
-
-**Cloud Run Benefits:**
-- Auto-scaling (scales to zero when not in use)
-- Automatic HTTPS
-- Pay-per-use pricing
-- Global load balancing
 
 ### 🎯 Your Task
 
